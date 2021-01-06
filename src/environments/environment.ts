@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  data: "The report entitled \"Global {title}\" is a well-organized thorough analysis of the Automobile industry across the world. The document would act as a great mentor not only for newcomers but also for newcomers existing pioneering players in the field—### assists in gaining insight and make suitable business relying on existing market conditions."
+  automobile: "The report entitled \"Global {title}\" is a well-organized thorough analysis of the Automobile industry across the world. The document would act as a great mentor not only for newcomers but also for newcomers existing pioneering players in the field—### assists in gaining insight and make suitable business relying on existing market conditions.",
 };
 
 /*
