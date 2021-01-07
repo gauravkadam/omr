@@ -4,8 +4,8 @@ import { ReportFormComponents } from './component/report-form/report-form.compon
 
 
 const routes: Routes = [
-  { path: 'generate-template', component: ReportFormComponents },
-  { path: '', redirectTo: 'generate-template', pathMatch: 'full' }
+  { path: 'generate-content', component: ReportFormComponents },
+  { path: '', redirectTo: 'generate-content', pathMatch: 'full' }
 ];
 
 @NgModule({

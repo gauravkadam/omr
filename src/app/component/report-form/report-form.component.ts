@@ -3,6 +3,7 @@ import { NgxCsvParser } from 'projects/ngx-csv-parser/src/public-api';
 import { NgxCSVParserError } from 'projects/ngx-csv-parser/src/public-api';
 import { environment } from '../../../environments/environment';
 import { ExportToCsv } from 'export-to-csv';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-report-form',
@@ -11,13 +12,12 @@ import { ExportToCsv } from 'export-to-csv';
 })
 export class ReportFormComponents {
 
-
+  htmlContent: any;
   csvRecords: any[] = [];
   header: boolean = false;
   transformedContent = [];
   data = [];
-
-  const options = {
+  options = {
     fieldSeparator: ',',
     quoteStrings: '"',
     decimalSeparator: '.',
@@ -27,15 +27,15 @@ export class ReportFormComponents {
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: true,
-    // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
   };
+  createTemplate: boolean;
+  selectedTemplate = "automobile";
 
-
-
-  constructor(private ngxCsvParser: NgxCsvParser) {
+  constructor(private ngxCsvParser: NgxCsvParser, private route: ActivatedRoute) {
+    this.route.queryParams.subscribe(res => {
+      this.createTemplate = res.template;
+    })
   }
-
-  // @ViewChild('fileImportInput') fileImportInput: any;
 
   fileChangeListener($event: any): void {
 
@@ -44,16 +44,17 @@ export class ReportFormComponents {
 
     this.ngxCsvParser.parse(files[0], { header: this.header, delimiter: ',' })
       .pipe().subscribe((result: Array<any>) => {
-        console.log('Result', result);
         this.csvRecords = result;
         this.csvRecords.splice(0, 1);
         for (let data of this.csvRecords) {
-          // console.log(data);
+          let transformedContent = environment[this.selectedTemplate].replace(/r_title/gi, data[0]);
+          transformedContent = transformedContent.replace(/r_url/gi, data[1]);
+          transformedContent = transformedContent.replace(/r_application/gi, this.getUnorderedList(data[4]));
+          transformedContent = transformedContent.replace(/r_company/gi, this.getUnorderedList(data[5]));
           this.data.push({
             Title: data[0],
-            Content: environment.automobile.replace('{title}', data[0]),
+            Content: transformedContent,
           });
-          // this.transformedContent.push(environment.data.replace('{title}', data[0]));
         }
       }, (error: NgxCSVParserError) => {
         console.log('Error', error);
@@ -65,16 +66,27 @@ export class ReportFormComponents {
   }
 
   downloadReport() {
-    // const downloadLink = document.createElement('a');
-    // const blob = new Blob(['\ufeff', `Title,Content\n3,4\n7,5`]);
-    // const url = URL.createObjectURL(blob);
-    // downloadLink.href = url;
-    // downloadLink.download = 'template.csv';
-    // document.body.appendChild(downloadLink);
-    // downloadLink.click();
-    // document.body.removeChild(downloadLink);
     const csvExporter = new ExportToCsv(this.options);
     csvExporter.generateCsv(this.data);
+  }
+
+  onChange(event){
+    console.log(event.target.value);
+    this.selectedTemplate = event.target.value;
+  }
+
+  generateString(){
+    console.log(this.htmlContent);
+  }
+
+  getUnorderedList(list){
+    const listArray = list.split(/\r?\n/);
+    let newList = [];
+    for(let ele of listArray){
+      newList.push(`<li>${ele}</li>`);
+    }
+    console.log('<ul>'+ newList.join('')+'</ul>');
+    return `<ul> ${newList.join('')}</ul>`;
   }
 
 }  
