@@ -30,7 +30,7 @@ export class ReportFormComponents {
   };
   createTemplate: boolean;
   selectedTemplate = "automobile";
-
+  toc = "";
   constructor(private ngxCsvParser: NgxCsvParser, private route: ActivatedRoute) {
     this.route.queryParams.subscribe(res => {
       this.createTemplate = res.template;
@@ -47,13 +47,20 @@ export class ReportFormComponents {
         this.csvRecords = result;
         this.csvRecords.splice(0, 1);
         for (let data of this.csvRecords) {
+          this.toc = " <div> <style>ol{counter-reset: item}li{display: block}li:before{content: counters(item, \".\") \" \"; counter-increment: item}</style> <ol> <li> Chapter <ol> <li>Рrеfасе</li><li>Аѕѕumрtіоnѕ</li><li>Аbbrеvіаtіоnѕ</li></ol> </li><li> Chapter <ol> <li>Rероrt Dеѕсrірtіоn <ol> <li>Маrkеt Dеfіnіtіоn аnd Ѕсоре</li></ol> </li><li>Ехесutіvе Ѕummаrу <ol> <li>Маrkеt Ѕnарѕhоt, Ву Тесhnоlоgу</li><li>Маrkеt Ѕnарѕhоt, Ву Dерlоуmеnt</li><li>Маrkеt Ѕnарѕhоt, Ву Wеароn Туре</li><li>Маrkеt Ѕnарѕhоt, Ву Rеgіоn</li></ol> </li></ol> </li><li> Chapter <ol> <li>Glоbаl r_title Маrkеt Dуnаmісѕ</li><li>Drіvеrѕ (D)</li><li>Rеѕtrаіntѕ (R)</li><li>Орроrtunіtу</li><li>Trend</li><li>DR Іmрасt Аnаlуѕіѕ</li><li>РЕЅТ Аnаlуѕіѕ</li><li>РОRТЕR’Ѕ Fіvе Fоrсеѕ Аnаlуѕіѕ</li><li>Ѕuррlу Сhаіn Аnаlуѕіѕ</li></ol> </li><li> Chapter r_type </li><li> Chapter r_application </li><li> Chapter <ol> <li>Glоbаl r_title Маrkеt Аnаlуѕіѕ, bу Rеgіоn</li><li>Маrkеt Аttrасtіvеnеѕѕ Іndех</li><li>Оvеrvіеw</li><li>Rеgіоnаl Тrеndѕ</li><li>Маrkеt Vаluе (UЅ$ Мn) аnd Fоrесаѕt, аnd Y-о-Y Grоwth, 2017–2027</li></ol> <ol> <li>Glоbаl r_title Маrkеt Аnаlуѕіѕ, bу Nоrth Аmеrіса</li></ol> </li><li> Chapter r_company </li><li> Chapter <ol> <li>Rеѕеаrсh Меthоdоlоgу</li><li>Аbоut Uѕ</li></ol> </li></ol> </div>";
           let transformedContent = environment[this.selectedTemplate].replace(/r_title/gi, data[0]);
           transformedContent = transformedContent.replace(/r_url/gi, data[1]);
           transformedContent = transformedContent.replace(/r_application/gi, this.getUnorderedList(data[4]));
           transformedContent = transformedContent.replace(/r_company/gi, this.getUnorderedList(data[5]));
+          this.toc = this.toc.replace(/r_application/gi, this.getOrderedList(data[4]));
+          this.toc = this.toc.replace(/r_company/gi, this.getOrderedListCompany(data[5]));
+          this.toc = this.toc.replace(/r_type/gi, this.getOrderedList(data[3]));
+          this.toc = this.toc.replace(/r_title/gi, data[0]);
+
           this.data.push({
             Title: data[0],
             Content: transformedContent,
+            TOC: this.toc
           });
         }
       }, (error: NgxCSVParserError) => {
@@ -70,23 +77,51 @@ export class ReportFormComponents {
     csvExporter.generateCsv(this.data);
   }
 
-  onChange(event){
+  onChange(event) {
     console.log(event.target.value);
     this.selectedTemplate = event.target.value;
   }
 
-  generateString(){
+  generateString() {
     console.log(this.htmlContent);
   }
 
-  getUnorderedList(list){
+  getUnorderedList(list) {
     const listArray = list.split(/\r?\n/);
     let newList = [];
-    for(let ele of listArray){
+    for (let ele of listArray) {
       newList.push(`<li>${ele}</li>`);
     }
-    console.log('<ul>'+ newList.join('')+'</ul>');
+    console.log('<ul>' + newList.join('') + '</ul>');
     return `<ul> ${newList.join('')}</ul>`;
+  }
+
+  getOrderedList(list) {
+    const listArray = list.split(/\r?\n/);
+    let newList = [];
+    for (let ele of listArray) {
+      newList.push(`<li>${ele}<ol>
+      <li>Оvеrvіеw</li>
+      <li>Маrkеt Vаluе (UЅ$ Мn) аnd Fоrесаѕt, аnd Y-о-Y Grоwth, 2017–2027</li>
+      </ol>
+      </li>`);
+    }
+    return `<ol> ${newList.join('')}</ol>`;
+  }
+
+  getOrderedListCompany(list) {
+    const listArray = list.split(/\r?\n/);
+    let newList = [];
+    for (let ele of listArray) {
+      newList.push(`<li>${ele}<ol>
+      <li>Соmраnу Оvеrvіеw</li>
+      <li>Рrоduсt Роrtfоlіо</li>
+      <li>Fіnаnсіаl Оvеrvіеw</li>
+      <li>ЅWОТ Аnаlуѕіѕ</li>
+      </ol>
+      </li>`);
+    }
+    return `<ol> ${newList.join('')}</ol>`;
   }
 
 }  
