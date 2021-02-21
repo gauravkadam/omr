@@ -29,7 +29,7 @@ export class ReportFormComponents {
     useKeysAsHeaders: true,
   };
   createTemplate: boolean;
-  selectedTemplate = "medicare";
+  selectedTemplate = "Template1";
   toc = "";
   constructor(private ngxCsvParser: NgxCsvParser, private route: ActivatedRoute) {
     this.route.queryParams.subscribe(res => {
@@ -55,10 +55,10 @@ export class ReportFormComponents {
           transformedContent = transformedContent.replace(/discount_url/gi, data[4]); 
           transformedContent = transformedContent.replace(/buynow_url/gi, data[5]); 
           transformedContent = transformedContent.replace(/r_application/gi, this.getUnorderedList(data[7]));
-          transformedContent = transformedContent.replace(/r_company/gi, this.getUnorderedList(data[5]));
+          transformedContent = transformedContent.replace(/r_company/gi, this.getUnorderedList(data[8]));
           transformedContent = transformedContent.replace(/r_types/gi, this.getUnorderedList(data[6]));
           this.toc = this.toc.replace(/r_application/gi, this.getOrderedList(data[7]));
-          this.toc = this.toc.replace(/r_company/gi, this.getOrderedListCompany(data[5]));
+          this.toc = this.toc.replace(/r_company/gi, this.getOrderedListCompany(data[8]));
           this.toc = this.toc.replace(/r_types/gi, this.getOrderedList(data[6]));
           this.toc = this.toc.replace(/r_title/gi, data[0]);
 
