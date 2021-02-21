@@ -4,9 +4,7 @@
     <div class="form-group">
       <label for="exampleFormControlSelect1">Select Template</label>
       <select (change)="onChange($event)" class="form-control">
-        <option value="automobile">Automobile</option>
         <option value="medicare">Medicare</option>
-        <option value="automobile3">Oil</option>
       </select>
       <button type="submit" class="btn btn-primary mb-2" (click)="uploadFile()">  Upload  </button>
       <input id="uploadFile" type="file" (change)="fileChangeListener($event)">

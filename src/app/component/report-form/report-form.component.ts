@@ -29,7 +29,7 @@ export class ReportFormComponents {
     useKeysAsHeaders: true,
   };
   createTemplate: boolean;
-  selectedTemplate = "automobile";
+  selectedTemplate = "medicare";
   toc = "";
   constructor(private ngxCsvParser: NgxCsvParser, private route: ActivatedRoute) {
     this.route.queryParams.subscribe(res => {
