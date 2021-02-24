@@ -29,11 +29,14 @@ export class ReportFormComponents {
     useKeysAsHeaders: true,
   };
   createTemplate: boolean;
-  selectedTemplate = "Template1";
+  selectedTemplate = "";
   toc = "";
+  dropdownListItems = [];
   constructor(private ngxCsvParser: NgxCsvParser, private route: ActivatedRoute) {
     this.route.queryParams.subscribe(res => {
       this.createTemplate = res.template;
+      this.dropdownListItems = environment.dropdownValues;
+      this.selectedTemplate = this.dropdownListItems[0];
     })
   }
 
@@ -54,6 +57,9 @@ export class ReportFormComponents {
           transformedContent = transformedContent.replace(/enquiry_url/gi, `<a href='${data[3]}'>${data[3]}</a>`); 
           transformedContent = transformedContent.replace(/discount_url/gi, `<a href='${data[4]}'>${data[4]}</a>`); 
           transformedContent = transformedContent.replace(/buynow_url/gi, `<a href='${data[5]}'>${data[5]}</a>`); 
+          transformedContent = transformedContent.replace(/keyword1/gi, `<a href='${data[10]}'>${data[9]}</a>`); 
+          transformedContent = transformedContent.replace(/keyword2/gi, `<a href='${data[12]}'>${data[11]}</a>`); 
+          transformedContent = transformedContent.replace(/keyword3/gi, `<a href='${data[14]}'>${data[13]}</a>`); 
           transformedContent = transformedContent.replace(/r_application/gi, this.getUnorderedList(data[7]));
           transformedContent = transformedContent.replace(/r_company/gi, this.getUnorderedList(data[8]));
           transformedContent = transformedContent.replace(/r_types/gi, this.getUnorderedList(data[6]));
@@ -88,6 +94,7 @@ export class ReportFormComponents {
   }
 
   generateString() {
+    this.htmlContent = this.htmlContent.replace(/"/gi,"'");
     console.log(this.htmlContent);
   }
 
